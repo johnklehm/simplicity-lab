@@ -15,6 +15,7 @@
 /************************************************************************************
  * External Includes
  ************************************************************************************/
+#include <stdlib.h>
 #include <unistd.h>
 #include "ballctrl.h"
 #include "pong.h"
@@ -118,6 +119,7 @@ static void collision()
 	if (child == 0)
 	{	// the child - play beep
 		execlp("/usr/bin/beep", "beep", "-f", "700", "-l", "20", NULL);
+		exit(EXIT_SUCCESS);
 	}
 	return;
 }
