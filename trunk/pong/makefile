@@ -1,47 +1,28 @@
-SHELL = /bin/sh
-SRCDIR = .
+EXENAME = pong
+LDFLAGS = -lpthread -lncurses
+
 CC = gcc
-YACC = bison -y
-CDEBUG = -g
-COMPLIANCE_FLAGS =
-CFLAGS = $(COMPLIANCE_FLAGS) $(CDEBUG) -I. -I$(SRCDIR)
-LDFLAGS = -g -lpthread -lncurses
-# List your sources and objects here.
-SOURCES =
-OBJS = pong.o opponent.o ballctrl.o paddlectrl.o
-# list the name of your output program here.
-EXECUTABLE = pong
+CFLAGS = -g3 -Wall -std=gnu99 #max debug info, max warning, c99+os calls
 
-$(EXECUTABLE) : $(OBJS)
-	$(CC) $(LDFLAGS) -o $(EXECUTABLE)  $(OBJS)
+# Build a list of the object files to create, based on the .c we find
+OBJS = $(patsubst %.c,%.o,$(wildcard *.c))
 
-include $(OBJS:.o=.d)
+all: $(EXENAME)
 
-all : $(OBJS) $(EXECUTABLE)
+$(EXENAME): $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) -o $(EXENAME)
 
-	
-%.o : %.c #Defines how to translate a single c file into an object file.
-	echo compiling $<
-	echo $(CC) $(CFLAGS) -c $<
-	$(CC) $(CFLAGS) -E $< > $<.preout
-	$(CC) $(CFLAGS) -S $<
-	$(CC) $(CFLAGS) -c $<
-	echo done compiling $<
+# pull in dependency info for *existing* .o files
+-include $(OBJS:.o=.d)
 
+%.o: %.c
+	$(CC) -c $(CFLAGS) $*.c -o $*.o
+	@$(CC) -MM $(CFLAGS) $*.c > $*.d
+	@mv -f $*.d $*.d.tmp
+	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
+	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
+	  sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
+	@rm -f $*.d.tmp
 
-%.d : %.c #Defines how to generate the dependencies for the given files.  -M gcc option generates dependencies.
-	@set -e; rm -f $@; \
-	$(CC) $(COMPLIANCE_FLAGS ) -M $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	 rm -f $@.$$$$
-
-clean :   # Clean build in which everything is created from scratch.
-	rm -f *.o
-	rm -f *d
-	rm -f *bb
-	rm -f *bbg
-	rm -f *gcov
-	rm -f *da
-	rm -f *preout
-	rm -f *.s
-	rm -f $(EXECUTABLE)
+clean:
+	rm -f $(EXENAME) *.o *.d
