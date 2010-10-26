@@ -14,6 +14,7 @@
 /************************************************************************************
  * External Includes
  ************************************************************************************/
+#include <unistd.h>
 #include <curses.h>
 #include "pong.h"
 
@@ -48,46 +49,44 @@
 void *moveme(void* vp)
 {
 	int ch;
-	int vpos = 0;	// start at top row
-
-	// get the extents of the screen
-	int maxx; 
-        int maxy;
-	getmaxyx(win,maxy,maxx);
+	uint16_t vpos = playFieldMinY;
 
 	// draw the default paddle
-	int i;
-	for (i=0;i<PADDLE_SIZE;i++)
-	{
-		mvaddch(i,0,' ' | A_REVERSE);
+	for (uint8_t i = 0; i < PADDLE_SIZE; ++i) {
+		drawChar(playFieldMinY + i, playFieldMinX, ' ' | A_REVERSE);
 	}
 
 	while(!quit)
 	{
 		ch = getch();
-		switch (ch)
-		{
+		switch (ch) {
 		case KEY_UP:
 			vpos--;
-			if (vpos < 0) 
-                        {
-                          vpos = 0;
-                        }
-			mvaddch(vpos,0,' ' | A_REVERSE);
-			mvaddch(vpos+PADDLE_SIZE,0,' ' | A_NORMAL);
+
+			if (vpos < playFieldMinY) {
+	            vpos = playFieldMinY;
+            }
+
+			drawChar(vpos, 0, ' ' | A_REVERSE);
+			drawChar(vpos + PADDLE_SIZE, 0, ' ' | A_NORMAL);
+
 			break;
 		case KEY_DOWN:
 			vpos++;
-			if (vpos > (maxy-PADDLE_SIZE)) 
-                        {
-                          vpos = (maxy-PADDLE_SIZE);
-                        }
-			mvaddch(vpos-1,0,' ' | A_NORMAL);
-			mvaddch(vpos+PADDLE_SIZE-1,0,' ' | A_REVERSE);
+
+ 			if (vpos > (playFieldMaxY - PADDLE_SIZE)) {
+				vpos = (playFieldMaxY - PADDLE_SIZE);
+			}
+
+			drawChar(vpos - 1, 0, ' ' | A_NORMAL);
+			drawChar(vpos + PADDLE_SIZE - 1, 0, ' ' | A_REVERSE);
+
 			break;
 		case 'p':
 			isPaused = true;
 			while (isPaused) {
+				usleep(gameDelay);
+
 				if (getch() == 'p') {
 					isPaused = false;
 				}

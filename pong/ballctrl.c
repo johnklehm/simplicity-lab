@@ -48,58 +48,49 @@ static void collision();
  *                              returned by the thread.
  ************************************************************************************/
 // This thread is responsible for moving the ball
-void *moveball(void* vp)
-{
-	// get the extents of the screen
-        int maxx;
-        
-        int maxy;
-	// how does this work??
-	getmaxyx(win,maxy,maxx);
+void *moveball(void* vp) {
 	// these should be floating point to get slopes other than
 	// +/- 45 degrees
 	float yadder = 1.0f;
 	float xadder = 1.0f;
-	float xactual = 1.0f;
-	float yactual = 1.0f;
+	float xactual = (float)ballx;
+	float yactual = (float)bally;
 
     while(!quit)
 	{
-		while (isPaused) { usleep(100000); }
+		while (isPaused) { usleep(gameDelay); }
 
-		mvaddch(bally,ballx,' ' | A_NORMAL);		
+		drawChar(bally,ballx,' ' | A_NORMAL);		
 		yactual+=yadder;
 		xactual+=xadder;
 		
 		// truncate
 		bally = (int)(yactual);
 		ballx = (int)(xactual);
-		if (bally>maxy-1)
-		{
+		// bottom boundary
+		if (bally >= playFieldMaxY) {
 			yadder = -yadder;
 			collision();
 		}
-		if (bally < 1)
-		{
+		// top boundry
+		if (bally <= playFieldMinY) {
 			yadder = -yadder;
 			collision();
 		}
-		if (ballx>maxx-1)
-		{
+		// right boundary
+		if (ballx >= playFieldMaxX) {
 			xadder = -xadder;
 			collision();
 		}
-		if (ballx < 1)
-		{
+		// left boundary
+		if (ballx <= playFieldMinX) {
 			xadder = -xadder;
 			collision();
 		}
-		mvaddch(bally,ballx,' ' | A_REVERSE );
+		drawChar(bally,ballx,' ' | A_REVERSE );
 
 		// Do not want ball to move too fast...		
-		usleep(100000);
-                // HINT: This really should be a variable, thus allowing you to speed up or slow
-                //  down play to increase / decrease level of difficulty.
+		usleep(gameDelay);
 	}
     return NULL;
 }
