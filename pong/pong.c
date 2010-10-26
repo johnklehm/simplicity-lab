@@ -49,7 +49,8 @@ int main(int argc, char* argv[])
 	// Global data - for inter-thread communication
 	ballx = 1;
 	bally = 1;
-	quit = false;  
+	quit = false;
+	isPaused = false;
 	
 	// init window - see curses documentation for guidance
 	win = initscr();
