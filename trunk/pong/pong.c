@@ -15,7 +15,6 @@
 /************************************************************************************
  * External Includes
  ************************************************************************************/
-#include <pthread.h>
 #include <curses.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -24,6 +23,7 @@
 #include "paddlectrl.h"
 #include "ballctrl.h"
 #include "opponent.h"
+#include "timer.h"
 
 /************************************************************************************
  * Method header:
@@ -39,19 +39,14 @@
  ************************************************************************************/
 int main(int argc, char* argv[])
 {
-        int rc1;
+	int rc1;
 	int rc2;
-        int rc3;
-	
-	pthread_t thread1, thread2, thread3;
+	int rc3;
+	int rc4;
 
-	// Initialize all of the variables.
-	// Global data - for inter-thread communication
-	ballx = 1;
-	bally = 1;
-	quit = false;
-	isPaused = false;
-	
+	pthread_t thread1, thread2, thread3, thread4;
+	pthread_mutex_init(&screenLock, NULL);
+
 	// init window - see curses documentation for guidance
 	win = initscr();
 	cbreak();
@@ -60,6 +55,30 @@ int main(int argc, char* argv[])
 	keypad(win,TRUE);
 	nodelay(win,TRUE);
 	refresh();
+	// get the extents of the screen
+	getmaxyx(win,maxy,maxx);
+
+	// Initialize all of the variables.
+	// Global data - for inter-thread communication
+	playFieldMinX = 0;
+	playFieldMaxX = maxx;
+	playFieldMinY = 2; // save space at the top for score and timer
+	playFieldMaxY = maxy;
+
+	// center the timer
+	timerX = maxx / 2;
+	timerY = 0;
+
+	// center the ball
+	ballx = playFieldMaxX / 2;
+	bally = playFieldMaxY / 2;
+
+	// settings
+	quit = false;
+	isPaused = false;
+	
+	
+	gameDelay = 100000;
 
 	// Start the threads
 	if ((rc1=pthread_create(&thread1, NULL, &moveball, NULL)))
@@ -74,11 +93,16 @@ int main(int argc, char* argv[])
 	{
 	  fprintf(stderr, "Thread 3 creation failed");
 	}
-	
+	if ((rc4=pthread_create(&thread4, NULL, &timer, NULL)))
+	{
+	  fprintf(stderr, "Thread 4 creation failed");
+	}
+
 	// Wait for the threads to exit
 	pthread_join(thread1, NULL);
-	pthread_join(thread2, NULL);
+	//pthread_join(thread2, NULL);
 	pthread_join(thread3, NULL);
+	//pthread_join(thread4, NULL);
 	
 	// tear down the window
 	delwin(win);
@@ -87,4 +111,10 @@ int main(int argc, char* argv[])
 	
 	// get out of here
 	return 0;
+}
+
+void drawChar(uint16_t y, uint16_t x, chtype c) {
+	pthread_mutex_lock(&screenLock);
+	mvaddch(y, x, c);
+	pthread_mutex_unlock(&screenLock);
 }

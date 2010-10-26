@@ -48,7 +48,7 @@
  ************************************************************************************/
 void *moveoponent(void* vp) {
 	while (!quit) {
-		while (isPaused) { usleep(100000); }
+		while (isPaused) { usleep(gameDelay); }
 	}
 
 	return NULL;
