@@ -65,6 +65,8 @@ void *moveball(void* vp)
 
     while(!quit)
 	{
+		while (isPaused) { usleep(100000); }
+
 		mvaddch(bally,ballx,' ' | A_NORMAL);		
 		yactual+=yadder;
 		xactual+=xadder;

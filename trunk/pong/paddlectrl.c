@@ -85,6 +85,15 @@ void *moveme(void* vp)
 			mvaddch(vpos-1,0,' ' | A_NORMAL);
 			mvaddch(vpos+PADDLE_SIZE-1,0,' ' | A_REVERSE);
 			break;
+		case 'p':
+			isPaused = true;
+			while (isPaused) {
+				if (getch() == 'p') {
+					isPaused = false;
+				}
+			}
+
+			break;
 		case 'q':
 			quit=true;
 			break;

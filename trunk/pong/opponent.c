@@ -14,6 +14,7 @@
 /************************************************************************************
  * External Includes
  ************************************************************************************/
+#include <unistd.h>
 #include "opponent.h"
 #include "pong.h"
 
@@ -45,11 +46,10 @@
  *                              Currently, it is always NULL, as no data is directly 
  *                              returned by the thread.
  ************************************************************************************/
-void *moveoponent(void* vp)
-{
-  while (!quit)
-  {
-    // Do something here.
-  }
-}
+void *moveoponent(void* vp) {
+	while (!quit) {
+		while (isPaused) { usleep(100000); }
+	}
 
+	return NULL;
+}
