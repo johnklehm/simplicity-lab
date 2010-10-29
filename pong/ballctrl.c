@@ -22,6 +22,11 @@
 
 typedef enum scorer {PLAYER, COMPUTER} Scorer;
 
+static float xactual;
+static float yactual;
+static float yadder;
+static float xadder;
+
 /**
  * Invoked when a ball collision is detected. It will fork a new child
  * process and play a beep sound. 
@@ -31,7 +36,7 @@ static void collision() {
 	pid_t child = fork();
 	if (child == 0) {
 		// the child - play beep
-		execlp("/usr/bin/beep", "beep", "-f", "700", "-l", "20", NULL);
+		execlp("/bin/bash", "bash", "beep.sh", NULL);
 		exit(EXIT_SUCCESS);
 	}
 }
@@ -42,18 +47,23 @@ static void collision() {
  * @param p Whoe the score should get attributed to
  */
 static void score(Scorer p) {
+	// center the ball after a goal
+	xactual = ballx = playFieldMaxX / 2;
+	yactual = bally = playFieldMaxY / 2;
+	xadder = -xadder;
+	yadder = -yadder;
+
     switch (p) {
     case COMPUTER:
-
+		++rightScore;
     break;
     case PLAYER:
-
+		++leftScore;
     break;
     default:
     break;
     }
 }
-
 
 /**
  * This function is responsible for moving the ball within the game of pong.
@@ -67,22 +77,38 @@ static void score(Scorer p) {
 void *moveball(void* vp) {
 	// these should be floating point to get slopes other than
 	// +/- 45 degrees
-	float yadder = 1.0f;
-	float xadder = 1.0f;
-	float xactual = ballx;
-	float yactual = bally;
+	yadder = 1.0f;
+	xadder = 1.0f;
+	xactual = ballx;
+	yactual = bally;
 
     while (!quit) {
 		while (isPaused) { usleep(gameDelay); }
 
 		drawChar(bally,ballx,' ' | A_NORMAL);		
-		yactual+=yadder;
-		xactual+=xadder;
+		yactual += yadder;
+		xactual += xadder;
 		
 		// truncate
 		bally = (int)(yactual);
 		ballx = (int)(xactual);
 
+		// paddle left
+		if ((ballx == leftPaddleX + paddleWidth)	&&
+			(bally <= leftPaddleY + paddleHeight)	&&
+			(bally >= leftPaddleY)					) {
+
+			xadder = -xadder;
+			collision();
+		}
+		// paddle right
+		if ((ballx == rightPaddleX - paddleWidth)	&&
+			(bally <= leftPaddleY + paddleHeight)	&&
+			(bally >= leftPaddleY)					) {
+
+			xadder = -xadder;
+			collision();
+		}
 		// bottom boundary
 		if (bally >= playFieldMaxY) {
 			yadder = -yadder;
@@ -95,13 +121,11 @@ void *moveball(void* vp) {
 		}
 		// right boundary
 		if (ballx >= playFieldMaxX) {
-			xadder = -xadder;
-                        score(PLAYER);
+			score(PLAYER);
 		}
 		// left boundary
 		if (ballx <= playFieldMinX) {
-			xadder = -xadder;
-                        score(COMPUTER);
+			score(COMPUTER);
 		}
 
 		drawChar(bally,ballx,' ' | A_REVERSE );

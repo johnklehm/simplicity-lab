@@ -86,7 +86,13 @@ int main(int argc, char* argv[]) {
 	ballx = playFieldMaxX / 2;
 	bally = playFieldMaxY / 2;
 
+	//starting score
+	leftScore = 0;
+	rightScore = 0;
+
 	// settings
+	paddleHeight = 5;
+	paddleWidth  = 1;
 	quit = false;
 	isPaused = false;	
 	gameDelay = 100000;

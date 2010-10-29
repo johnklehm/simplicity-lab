@@ -27,6 +27,14 @@
  * 			always NULL, as no data is directly returned by the thread.
  */
 void *moveoponent(void* vp) {
+	rightPaddleX = playFieldMaxX;
+	rightPaddleY = playFieldMinY;
+
+	// draws the computer's paddle
+	for (uint8_t i = 0; i < paddleHeight; ++i) {
+		drawChar(rightPaddleY + i, rightPaddleX - 1, ' ' | A_REVERSE);
+	}
+
 	while (!quit) {
 		while (isPaused) { usleep(gameDelay); }
 	}
