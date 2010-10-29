@@ -36,8 +36,16 @@ EXTERN_PFX uint16_t playFieldMinX;
 EXTERN_PFX uint16_t playFieldMinY;
 EXTERN_PFX uint16_t timerX;			// coordinates of the timer
 EXTERN_PFX uint16_t timerY;
+EXTERN_PFX uint16_t leftPaddleX;
+EXTERN_PFX uint16_t leftPaddleY;
+EXTERN_PFX uint16_t rightPaddleX;
+EXTERN_PFX uint16_t rightPaddleY;
 EXTERN_PFX uint32_t gameDelay;		// time to delay the game in microseconds
 EXTERN_PFX uint32_t ticks;			// total ticks of the timer. fluxuates with the delay
+EXTERN_PFX uint8_t leftScore;
+EXTERN_PFX uint8_t rightScore;
+EXTERN_PFX uint8_t paddleHeight;
+EXTERN_PFX uint8_t paddleWidth;
 EXTERN_PFX pthread_mutex_t ticksLock;
 EXTERN_PFX pthread_mutex_t screenLock;
 

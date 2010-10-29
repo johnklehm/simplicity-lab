@@ -21,8 +21,6 @@
 #include <stdint.h>
 #include "pong.h"
 
-static const uint8_t paddleSize = 5;
-
 /**
  * Changes the game delay and adjust the tick count in a thread safe manner
  *
@@ -44,11 +42,12 @@ void setDelay(uint32_t newDelay) {
  */
 void* moveme(void* vp) {
 	int ch;
-	uint16_t vpos = playFieldMinY;
+	leftPaddleX = playFieldMinX;
+	leftPaddleY = playFieldMinY;
 
 	// draw the default paddle
-	for (uint8_t i = 0; i < paddleSize; ++i) {
-		drawChar(playFieldMinY + i, playFieldMinX, ' ' | A_REVERSE);
+	for (uint8_t i = 0; i < paddleHeight; ++i) {
+		drawChar(leftPaddleY + i, leftPaddleX, ' ' | A_REVERSE);
 	}
 
 	while (!quit) {
@@ -56,25 +55,25 @@ void* moveme(void* vp) {
 
 		switch (ch) {
 		case KEY_UP:
-			--vpos;
+			--leftPaddleY;
 
-			if (vpos < playFieldMinY) {
-	            vpos = playFieldMinY;
+			if (leftPaddleY < playFieldMinY) {
+	            leftPaddleY = playFieldMinY;
             }
 
-			drawChar(vpos, 0, ' ' | A_REVERSE);
-			drawChar(vpos + paddleSize, 0, ' ' | A_NORMAL);
+			drawChar(leftPaddleY, 0, ' ' | A_REVERSE);
+			drawChar(leftPaddleY + paddleHeight, 0, ' ' | A_NORMAL);
 
 			break;
 		case KEY_DOWN:
-			++vpos;
+			++leftPaddleY;
 
- 			if (vpos > (playFieldMaxY - paddleSize)) {
-				vpos = (playFieldMaxY - paddleSize);
+ 			if (leftPaddleY > (playFieldMaxY - paddleHeight)) {
+				leftPaddleY = (playFieldMaxY - paddleHeight);
 			}
 
-			drawChar(vpos - 1, 0, ' ' | A_NORMAL);
-			drawChar(vpos + paddleSize - 1, 0, ' ' | A_REVERSE);
+			drawChar(leftPaddleY - 1, 0, ' ' | A_NORMAL);
+			drawChar(leftPaddleY + paddleHeight - 1, 0, ' ' | A_REVERSE);
 
 			break;
 		// pause
