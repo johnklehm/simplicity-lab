@@ -23,11 +23,13 @@
 /************************************************************************************
  * Private structure / type definitions
  ************************************************************************************/
+typedef enum scorer {PLAYER, COMPUTER} Scorer;
 
 /************************************************************************************
  * Private function / method prototypes
  ************************************************************************************/
 static void collision();
+static void score(Scorer p);
 
 /************************************************************************************
  * Constant declarations / table declarations
@@ -80,12 +82,12 @@ void *moveball(void* vp) {
 		// right boundary
 		if (ballx >= playFieldMaxX) {
 			xadder = -xadder;
-			collision();
+                        score(PLAYER);
 		}
 		// left boundary
 		if (ballx <= playFieldMinX) {
 			xadder = -xadder;
-			collision();
+                        score(COMPUTER);
 		}
 		drawChar(bally,ballx,' ' | A_REVERSE );
 
@@ -115,4 +117,17 @@ static void collision()
 		exit(EXIT_SUCCESS);
 	}
 	return;
+}
+
+static void score(Scorer p) {
+    switch (p) {
+    case COMPUTER:
+
+    break;
+    case PLAYER:
+
+    break;
+    default:
+    break;
+    }
 }

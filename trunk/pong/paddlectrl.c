@@ -100,6 +100,6 @@ void *moveme(void* vp)
 			break;
 		}
 	}
-	return NULL;	
-}
 
+	return NULL;
+}
