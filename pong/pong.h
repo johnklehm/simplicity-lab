@@ -1,14 +1,15 @@
-/************************************************************************************
-* This file was developed as part of CS3841 Design of Operating Systems at the 
-* Milwaukee School of Engineering.  This file is copyright 2008-2009 by MSOE.
-* 
-* $Author: wws $
-* $Revision: 1.1 $
-* $Name:  $
-* This file servers as the interface header definition for the ball controller logic of the 
-* pong game.
-*
-************************************************************************************/
+/* pong.h		1.2		20101028
+ *
+ * @author wws klehmc krewalk
+ * @version 1.2
+ * @date 20101028
+ * @course cs3841-002
+ *
+ * This file was developed as part of CS3841 Design of Operating Systems at the 
+ * Milwaukee School of Engineering.  This file is copyright 2008-2009 by MSOE.
+ * 
+ * Copyright 2010 klehmc krewalk
+ */
 #ifndef PONG_H
 #define PONG_H
 
@@ -18,42 +19,29 @@
 #define EXTERN_PFX extern
 #endif
 
-/************************************************************************************
- * External Includes
- ************************************************************************************/
 #include <curses.h>
 #include <pthread.h>
 #include <stdint.h>
 
-/************************************************************************************
- * Public structure / type definitions
- ************************************************************************************/
-// None as of right now.
-
-/************************************************************************************
- * Public / global variable definitions
- ************************************************************************************/
-// Global data - for inter-thread communication
-EXTERN_PFX uint16_t ballx;
+EXTERN_PFX uint16_t ballx;			//coordinates of the ball
 EXTERN_PFX uint16_t bally;
-EXTERN_PFX WINDOW *win;	// the curses window
-EXTERN_PFX bool quit;  // a flag to stop all threads
-EXTERN_PFX bool isPaused; // true is pause, false if not
-EXTERN_PFX uint16_t maxx;
+EXTERN_PFX WINDOW *win; 			// the curses window
+EXTERN_PFX bool quit;				// flag to stop all threads
+EXTERN_PFX bool isPaused;			// flag to pause all threads
+EXTERN_PFX uint16_t maxx;			// max raw terminal size
 EXTERN_PFX uint16_t maxy;
-EXTERN_PFX uint16_t playFieldMaxX;
+EXTERN_PFX uint16_t playFieldMaxX;	// coordinates of the play area
 EXTERN_PFX uint16_t playFieldMaxY;
 EXTERN_PFX uint16_t playFieldMinX;
 EXTERN_PFX uint16_t playFieldMinY;
-EXTERN_PFX uint16_t timerX;
+EXTERN_PFX uint16_t timerX;			// coordinates of the timer
 EXTERN_PFX uint16_t timerY;
-EXTERN_PFX uint32_t gameDelay;
+EXTERN_PFX uint32_t gameDelay;		// time to delay the game in microseconds
+EXTERN_PFX uint32_t ticks;			// total ticks of the timer. fluxuates with the delay
+EXTERN_PFX pthread_mutex_t ticksLock;
 EXTERN_PFX pthread_mutex_t screenLock;
 
-/************************************************************************************
- * Public function / method prototypes
- ************************************************************************************/
-EXTERN_PFX int main(int argc, char* argv[]);
 EXTERN_PFX void drawChar(uint16_t y, uint16_t x, chtype c);
+
 #undef EXTERN_PFX
 #endif

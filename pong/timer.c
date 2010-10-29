@@ -1,8 +1,13 @@
-/* timer.c       2010 10 26       1.0
- * @author klehmc
- * @version 1.0
- * @date 20101026
- * @course CS3841-002
+/* pong.c		1.2		20101028
+ *
+ * @author klehmc krewalk
+ * @version 1.2
+ * @date 20101028
+ * @course cs3841-002
+ *
+ * Copyright 2010 klehmc krewalk
+ *
+ * This file manages the timer throughout the game of pong
  */
 #define TIMER_C
 
@@ -14,26 +19,29 @@
 
 /**
  * Keeps track of and updates a timer display
+ *
+ * @param vp Generic parameter to pass information to this thread - unused
+ * @return generic pointer to pass information from this thread - unused
  */
-void *timer(void* vp) {
-	uint32_t ticks = 0;
+void* timer(void* vp) {
 	while (!quit) {
-                static const uint8_t bufSize = 32;
-                char timerBuf[bufSize];
 		while (isPaused) { usleep(gameDelay); }
 
-                memset(timerBuf, 0, bufSize);
-                snprintf(timerBuf, bufSize, "%i", ticks++ / (100000/gameDelay));
+		static const uint8_t bufSize = 32;
+        char timerBuf[bufSize];
 
-                for (uint8_t i = bufSize - 1; i >= 0; --i) {
-                    if (timerBuf[i] != 0) {
-                        timerBuf[i + 1] = timerBuf[i];
-                        timerBuf[i] = '.';
-                        break;
-                    }
-                }
+		memset(timerBuf, 0, bufSize);
+		snprintf(timerBuf, bufSize, "%i", ticks++ / (100000 / gameDelay));
+
+		for (uint8_t i = bufSize - 1; i >= 0; --i) {
+			if (timerBuf[i] != 0) {
+				timerBuf[i + 1] = timerBuf[i];
+				timerBuf[i] = '.';
+				break;
+			}
+		}
 		
-                for (uint8_t i = 0; timerBuf[i] != 0 && i < bufSize; ++i) {
+		for (uint8_t i = 0; timerBuf[i] != 0 && i < bufSize; ++i) {
 			drawChar(timerY, timerX + i, timerBuf[i]);
 		}
 
