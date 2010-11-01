@@ -102,7 +102,7 @@ void *moveball(void* vp) {
 			collision();
 		}
 		// paddle right
-		if ((ballx == rightPaddleX - paddleWidth)	&&
+		if ((ballx == rightPaddleX - 1)	&&
 			(bally <= leftPaddleY + paddleHeight)	&&
 			(bally >= leftPaddleY)					) {
 
