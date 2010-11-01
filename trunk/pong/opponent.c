@@ -26,17 +26,42 @@
  * @return This is the return value when the thread exits. Currently, it is
  * 			always NULL, as no data is directly returned by the thread.
  */
-void *moveoponent(void* vp) {
-	rightPaddleX = playFieldMaxX;
+void* moveoponent(void* vp) {
+	rightPaddleX = playFieldMaxX - 1;
 	rightPaddleY = playFieldMinY;
 
 	// draws the computer's paddle
 	for (uint8_t i = 0; i < paddleHeight; ++i) {
-		drawChar(rightPaddleY + i, rightPaddleX - 1, ' ' | A_REVERSE);
+		drawChar(rightPaddleY + i, rightPaddleX, ' ' | A_REVERSE);
 	}
 
 	while (!quit) {
 		while (isPaused) { usleep(gameDelay); }
+
+		// when ball is above the paddle
+		if (bally <= (rightPaddleY + (paddleHeight / 2))) {
+			--rightPaddleY;
+
+			if (rightPaddleY < playFieldMinY) {
+				rightPaddleY = playFieldMinY;
+			}
+
+			drawChar(rightPaddleY, rightPaddleX, ' ' | A_REVERSE);
+			drawChar(rightPaddleY + paddleHeight, rightPaddleX, ' ' | A_NORMAL);
+
+		// when ball is below the paddle
+		} else if (bally > (rightPaddleY + (paddleHeight / 2))) {
+			++rightPaddleY;
+
+			if (rightPaddleY > (playFieldMaxY - paddleHeight)) {
+				rightPaddleY = (playFieldMaxY - paddleHeight);
+			}
+
+			drawChar(rightPaddleY - 1, rightPaddleX, ' ' | A_NORMAL);
+			drawChar(rightPaddleY + paddleHeight - 1, rightPaddleX, ' ' | A_REVERSE);
+		}
+
+		usleep(gameDelay);
 	}
 
 	return NULL;
