@@ -89,6 +89,11 @@ void* moveme(void* vp) {
 			}
 
 			break;
+		// autoplay
+		case 'a':
+			autoPlayEnabled = (autoPlayEnabled)? false : true;
+
+			break;
 		// quit
 		case 'q':
 			quit=true;

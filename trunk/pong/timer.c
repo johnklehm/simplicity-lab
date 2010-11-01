@@ -1,4 +1,4 @@
-/* pong.c		1.2		20101028
+/* timer.c		1.2		20101028
  *
  * @author klehmc krewalk
  * @version 1.2
@@ -33,6 +33,7 @@ void* timer(void* vp) {
 		memset(timerBuf, 0, bufSize);
 		snprintf(timerBuf, bufSize, "%i", ticks++ / (100000 / gameDelay));
 
+		// add the decimal for tenths of a second e.g. 13.5 seconds
 		for (uint8_t i = bufSize - 1; i >= 0; --i) {
 			if (timerBuf[i] != 0) {
 				timerBuf[i + 1] = timerBuf[i];

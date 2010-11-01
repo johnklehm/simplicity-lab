@@ -26,6 +26,8 @@
 #include "ballctrl.h"
 #include "opponent.h"
 #include "timer.h"
+#include "score.h"
+#include "autoplay.h"
 
 /**
  * Draws a character to the screen. Thread safe.
@@ -51,12 +53,7 @@ void drawChar(uint16_t y, uint16_t x, chtype c) {
  *			A negative value will indicate an error.
  */
 int main(int argc, char* argv[]) {
-	int rc1;
-	int rc2;
-	int rc3;
-	int rc4;
-
-	pthread_t thread1, thread2, thread3, thread4;
+	pthread_t thread1, thread2, thread3, thread4, thread5, thread6;
 	pthread_mutex_init(&screenLock, NULL);
 	pthread_mutex_init(&ticksLock, NULL);
 
@@ -82,6 +79,12 @@ int main(int argc, char* argv[]) {
 	timerX = maxx / 2;
 	timerY = 0;
 
+	// score position
+	lScoreX = timerX - 5;
+	rScoreX = timerX + 10;
+	lScoreY = timerY;
+	rScoreY = timerY;	
+
 	// center the ball
 	ballx = playFieldMaxX / 2;
 	bally = playFieldMaxY / 2;
@@ -94,21 +97,34 @@ int main(int argc, char* argv[]) {
 	paddleHeight = 5;
 	paddleWidth  = 1;
 	quit = false;
-	isPaused = false;	
+	isPaused = false;
+	autoPlayEnabled = false;
 	gameDelay = 100000;
 
+
+	//draw boundary
+	for (uint8_t i = playFieldMinX; i < playFieldMaxX; ++i) {
+		drawChar(playFieldMinY - 1, i, '_');
+	}
+
 	// Start the threads
-	if ((rc1=pthread_create(&thread1, NULL, &moveball, NULL))) 	{
+	if (pthread_create(&thread1, NULL, &moveball, NULL)) 	{
 	  fprintf(stderr, "Thread 1 creation failed");
 	}
-	if ((rc2=pthread_create(&thread2, NULL, &moveoponent, NULL))) {
+	if (pthread_create(&thread2, NULL, &moveoponent, NULL)) {
 	  fprintf(stderr, "Thread 2 creation failed");
 	}
-	if ((rc3=pthread_create(&thread3, NULL, &moveme, NULL))) {
+	if (pthread_create(&thread3, NULL, &moveme, NULL)) {
 	  fprintf(stderr, "Thread 3 creation failed");
 	}
-	if ((rc4=pthread_create(&thread4, NULL, &timer, NULL))) {
+	if (pthread_create(&thread4, NULL, &timer, NULL)) {
 	  fprintf(stderr, "Thread 4 creation failed");
+	}
+	if (pthread_create(&thread5, NULL, &score, NULL)) {
+	  fprintf(stderr, "Thread 5 creation failed");
+	}
+	if (pthread_create(&thread6, NULL, &moveplayer, NULL)) {
+	  fprintf(stderr, "Thread 6 creation failed");
 	}
 
 	// Wait for the threads to exit
@@ -116,6 +132,8 @@ int main(int argc, char* argv[]) {
 	pthread_join(thread2, NULL);
 	pthread_join(thread3, NULL);
 	pthread_join(thread4, NULL);
+	pthread_join(thread5, NULL);
+	pthread_join(thread6, NULL);
 	
 	// tear down the window
 	delwin(win);
