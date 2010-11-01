@@ -28,6 +28,7 @@ EXTERN_PFX uint16_t bally;
 EXTERN_PFX WINDOW *win; 			// the curses window
 EXTERN_PFX bool quit;				// flag to stop all threads
 EXTERN_PFX bool isPaused;			// flag to pause all threads
+EXTERN_PFX bool autoPlayEnabled;	// flag to enable the auto play thread
 EXTERN_PFX uint16_t maxx;			// max raw terminal size
 EXTERN_PFX uint16_t maxy;
 EXTERN_PFX uint16_t playFieldMaxX;	// coordinates of the play area
@@ -36,6 +37,10 @@ EXTERN_PFX uint16_t playFieldMinX;
 EXTERN_PFX uint16_t playFieldMinY;
 EXTERN_PFX uint16_t timerX;			// coordinates of the timer
 EXTERN_PFX uint16_t timerY;
+EXTERN_PFX uint16_t lScoreX;
+EXTERN_PFX uint16_t lScoreY;
+EXTERN_PFX uint16_t rScoreX;
+EXTERN_PFX uint16_t rScoreY;
 EXTERN_PFX uint16_t leftPaddleX;
 EXTERN_PFX uint16_t leftPaddleY;
 EXTERN_PFX uint16_t rightPaddleX;
