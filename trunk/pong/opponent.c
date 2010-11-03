@@ -1,6 +1,6 @@
 /* opponent.c		1.2		20101028
  *
- * @author wws klehmc krewalk
+ * @author wws klehmc grewalk
  * @version 1.2
  * @date 20101028
  * @course cs3841-002
@@ -8,7 +8,7 @@
  * This file was developed as part of CS3841 Design of Operating Systems at the 
  * Milwaukee School of Engineering.  This file is copyright 2008-2009 by MSOE.
  * 
- * Copyright 2010 klehmc krewalk
+ * Copyright 2010 klehmc grewalk
  *
  * This file manages tthe motion of the oponent's paddle.
  */
@@ -26,42 +26,53 @@
  * @return This is the return value when the thread exits. Currently, it is
  * 			always NULL, as no data is directly returned by the thread.
  */
-void* moveoponent(void* vp) {
-	rightPaddleX = playFieldMaxX - 1;
-	rightPaddleY = playFieldMinY;
+void* moveopponent(void* vp) {
+	GameState gs;
 
+	pthread_mutex_lock(&stateLock);
 	// draws the computer's paddle
-	for (uint8_t i = 0; i < paddleHeight; ++i) {
-		drawChar(rightPaddleY + i, rightPaddleX, ' ' | A_REVERSE);
+	for (uint8_t i = 0; i < state.paddleHeight; ++i) {
+		drawChar(state.rightPaddlePos.y + i, state.rightPaddlePos.x, ' ' | A_REVERSE);
 	}
+	pthread_mutex_unlock(&stateLock);
 
-	while (!quit) {
-		while (isPaused) { usleep(gameDelay); }
+	while (!state.quit) {
+		while (state.isPaused) { usleep(state.timerDelay); }
+
+		getGameState(&gs);
 
 		// when ball is above the paddle
-		if (bally <= (rightPaddleY + (paddleHeight / 2))) {
-			--rightPaddleY;
+		if (gs.ballPos.y <= (gs.rightPaddlePos.y + (gs.paddleHeight / 2))) {
+			--gs.rightPaddlePos.y;
 
-			if (rightPaddleY < playFieldMinY) {
-				rightPaddleY = playFieldMinY;
+			if (gs.rightPaddlePos.y < gs.playFieldMin.y) {
+				gs.rightPaddlePos.y = gs.playFieldMin.y;
 			}
 
-			drawChar(rightPaddleY, rightPaddleX, ' ' | A_REVERSE);
-			drawChar(rightPaddleY + paddleHeight, rightPaddleX, ' ' | A_NORMAL);
+			state.rightPaddlePos.y = gs.rightPaddlePos.y;
+
+			drawChar(gs.rightPaddlePos.y, gs.rightPaddlePos.x, ' ' | A_REVERSE);
+			drawChar(gs.rightPaddlePos.y + gs.paddleHeight, gs.rightPaddlePos.x, ' ' | A_NORMAL);
+
+			usleep(gs.rightPaddleDelay);
 
 		// when ball is below the paddle
-		} else if (bally > (rightPaddleY + (paddleHeight / 2))) {
-			++rightPaddleY;
+		} else if (gs.ballPos.y > (gs.rightPaddlePos.y + (gs.paddleHeight / 2))) {
+			++gs.rightPaddlePos.y;
 
-			if (rightPaddleY > (playFieldMaxY - paddleHeight)) {
-				rightPaddleY = (playFieldMaxY - paddleHeight);
+			if (gs.rightPaddlePos.y > (gs.playFieldMax.y - gs.paddleHeight)) {
+				gs.rightPaddlePos.y = (gs.playFieldMax.y - gs.paddleHeight);
 			}
 
-			drawChar(rightPaddleY - 1, rightPaddleX, ' ' | A_NORMAL);
-			drawChar(rightPaddleY + paddleHeight - 1, rightPaddleX, ' ' | A_REVERSE);
+			state.rightPaddlePos.y = gs.rightPaddlePos.y;
+
+			drawChar(gs.rightPaddlePos.y - 1, gs.rightPaddlePos.x, ' ' | A_NORMAL);
+			drawChar(gs.rightPaddlePos.y + gs.paddleHeight - 1, gs.rightPaddlePos.x, ' ' | A_REVERSE);
+
+			usleep(gs.rightPaddleDelay);
 		}
 
-		usleep(gameDelay);
+		sched_yield();
 	}
 
 	return NULL;
