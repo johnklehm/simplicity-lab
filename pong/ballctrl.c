@@ -56,6 +56,7 @@ void collision(Direction d) {
 
 	pthread_mutex_unlock(&stateLock);
 
+	sched_yield();
 	usleep(100000);
 }
 
