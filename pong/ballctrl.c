@@ -68,8 +68,8 @@ void collision(Direction d) {
 static void score(GameState* gs, Scorer p) {
 	srand(time(NULL));
 	// center the ball after a goal
-	xactual = (gs->playFieldMax.x / 2) + rand() % 20;
-	yactual = (gs->playFieldMax.y / 2) + rand() % 20;
+	xactual = (gs->playFieldMax.x / 2) + rand() % 5;
+	yactual = (gs->playFieldMax.y / 2) + rand() % 5;
 	// reverse its direction
 	xadder = -xadder;
 	yadder = -yadder;
