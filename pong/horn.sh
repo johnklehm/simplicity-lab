@@ -1,5 +1,5 @@
 #!/bin/bash
-# beep.sh 		1.0		20101101
+# horn.sh 		1.0		20101101
 #
 # @author klehmc grewalk
 # @version 1.2
@@ -10,4 +10,4 @@
 #
 # This file plays a sound from the command line and prevents it from printing to the console
 #
-play beep.wav &> /dev/null
+play horn.wav &> /dev/null

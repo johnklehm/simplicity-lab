@@ -1,11 +1,11 @@
 /* autoplay.c		1.2		20101101
  *
- * @author wws klehmc krewalk
+ * @author wws klehmc grewalk
  * @version 1.2
  * @date 20101101
  * @course cs3841-002
  *
- * Copyright 2010 klehmc krewalk
+ * Copyright 2010 klehmc grewalk
  *
  * This file manages the motion of the player's paddle.
  */
@@ -24,36 +24,52 @@
  * 			always NULL, as no data is directly returned by the thread.
  */
 void* moveplayer(void* vp) {
-	while (!quit) {
+	GameState gs;
+
+	while (!state.quit) {
 		// sleep if we're paused or if autoplay is off
-		while (isPaused || (!isPaused && !autoPlayEnabled && !quit)) {
-			usleep(gameDelay);
+		while (state.isPaused ||
+			(!state.isPaused && !state.autoPlayEnabled && !state.quit)) {
+			usleep(state.timerDelay);
 		}
+
+		getGameState(&gs);
 
 		// when ball is above the paddle
-		if (bally <= (leftPaddleY + (paddleHeight / 2))) {
-			--leftPaddleY;
+		if (gs.ballPos.y <= (gs.leftPaddlePos.y + (gs.paddleHeight / 2))) {
+			--gs.leftPaddlePos.y;
 
-			if (leftPaddleY < playFieldMinY) {
-				leftPaddleY = playFieldMinY;
+			if (gs.leftPaddlePos.y < gs.playFieldMin.y) {
+				gs.leftPaddlePos.y = gs.playFieldMin.y;
 			}
 
-			drawChar(leftPaddleY, leftPaddleX, ' ' | A_REVERSE);
-			drawChar(leftPaddleY + paddleHeight, leftPaddleX, ' ' | A_NORMAL);
+			state.leftPaddlePos.y = gs.leftPaddlePos.y;
+
+			drawChar(gs.leftPaddlePos.y, gs.leftPaddlePos.x, ' ' | A_REVERSE);
+			drawChar(gs.leftPaddlePos.y + gs.paddleHeight, gs.leftPaddlePos.x, ' ' | A_NORMAL);
+
+			// wait a bit after we  move
+			usleep(gs.leftPaddleDelay);
 
 		// when ball is below the paddle
-		} else if (bally > (leftPaddleY + (paddleHeight / 2))) {
-			++leftPaddleY;
+		} else if (gs.ballPos.y > (gs.leftPaddlePos.y + (gs.paddleHeight / 2))) {
+			++gs.leftPaddlePos.y;
 
-			if (leftPaddleY > (playFieldMaxY - paddleHeight)) {
-				leftPaddleY = (playFieldMaxY - paddleHeight);
+			if (gs.leftPaddlePos.y > (gs.playFieldMax.y - gs.paddleHeight)) {
+				gs.leftPaddlePos.y = (gs.playFieldMax.y - gs.paddleHeight);
 			}
 
-			drawChar(leftPaddleY - 1, leftPaddleX, ' ' | A_NORMAL);
-			drawChar(leftPaddleY + paddleHeight - 1, leftPaddleX, ' ' | A_REVERSE);
+			state.leftPaddlePos.y = gs.leftPaddlePos.y;
+
+			drawChar(gs.leftPaddlePos.y - 1, gs.leftPaddlePos.x, ' ' | A_NORMAL);
+			drawChar(gs.leftPaddlePos.y + gs.paddleHeight - 1, gs.leftPaddlePos.x, ' ' | A_REVERSE);
+
+			// wait a bit after we  move
+			usleep(gs.leftPaddleDelay);
 		}
 
-		usleep(gameDelay);
+		// give other threads a turn
+		sched_yield();
 	}
 
 	return NULL;

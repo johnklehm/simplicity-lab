@@ -1,11 +1,11 @@
 /* timer.h		1.2		20101028
  *
- * @author klehmc krewalk
+ * @author klehmc grewalk
  * @version 1.2
  * @date 20101028
  * @course cs3841-002
  *
- * Copyright 2010 klehmc krewalk
+ * Copyright 2010 klehmc grewalk
  */
 #ifndef TIMER_H
 #define TIMER_H

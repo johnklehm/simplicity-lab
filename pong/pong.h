@@ -1,6 +1,6 @@
 /* pong.h		1.2		20101028
  *
- * @author wws klehmc krewalk
+ * @author wws klehmc grewalk
  * @version 1.2
  * @date 20101028
  * @course cs3841-002
@@ -8,7 +8,7 @@
  * This file was developed as part of CS3841 Design of Operating Systems at the 
  * Milwaukee School of Engineering.  This file is copyright 2008-2009 by MSOE.
  * 
- * Copyright 2010 klehmc krewalk
+ * Copyright 2010 klehmc grewalk
  */
 #ifndef PONG_H
 #define PONG_H
@@ -23,38 +23,45 @@
 #include <pthread.h>
 #include <stdint.h>
 
-EXTERN_PFX uint16_t ballx;			//coordinates of the ball
-EXTERN_PFX uint16_t bally;
-EXTERN_PFX WINDOW *win; 			// the curses window
-EXTERN_PFX bool quit;				// flag to stop all threads
-EXTERN_PFX bool isPaused;			// flag to pause all threads
-EXTERN_PFX bool autoPlayEnabled;	// flag to enable the auto play thread
-EXTERN_PFX uint16_t maxx;			// max raw terminal size
-EXTERN_PFX uint16_t maxy;
-EXTERN_PFX uint16_t playFieldMaxX;	// coordinates of the play area
-EXTERN_PFX uint16_t playFieldMaxY;
-EXTERN_PFX uint16_t playFieldMinX;
-EXTERN_PFX uint16_t playFieldMinY;
-EXTERN_PFX uint16_t timerX;			// coordinates of the timer
-EXTERN_PFX uint16_t timerY;
-EXTERN_PFX uint16_t lScoreX;
-EXTERN_PFX uint16_t lScoreY;
-EXTERN_PFX uint16_t rScoreX;
-EXTERN_PFX uint16_t rScoreY;
-EXTERN_PFX uint16_t leftPaddleX;
-EXTERN_PFX uint16_t leftPaddleY;
-EXTERN_PFX uint16_t rightPaddleX;
-EXTERN_PFX uint16_t rightPaddleY;
-EXTERN_PFX uint32_t gameDelay;		// time to delay the game in microseconds
-EXTERN_PFX uint32_t ticks;			// total ticks of the timer. fluxuates with the delay
-EXTERN_PFX uint8_t leftScore;
-EXTERN_PFX uint8_t rightScore;
-EXTERN_PFX uint8_t paddleHeight;
-EXTERN_PFX uint8_t paddleWidth;
-EXTERN_PFX pthread_mutex_t ticksLock;
+typedef struct point {
+	uint16_t x;
+	uint16_t y;
+} Point;
+
+typedef struct gameState {
+	bool quit;				// flag to stop all threads
+	bool isPaused;			// flag to pause all threads
+	bool autoPlayEnabled;	// flag to enable the auto play thread
+	Point screenMax;		// max terminal size
+	Point playFieldMin;		// play area
+	Point playFieldMax;
+	Point timerPos;
+	Point ballPos;
+	Point leftScorePos;
+	Point rightScorePos;
+	Point leftPaddlePos;
+	Point rightPaddlePos;
+	uint32_t ballDelay;
+	uint32_t rightPaddleDelay;
+	uint32_t leftPaddleDelay;
+	uint32_t timerDelay;
+	uint32_t collisionDelay;
+	uint32_t ticks;
+	uint8_t leftScore;
+	uint8_t rightScore;
+	uint8_t paddleHeight;
+	uint8_t paddleWidth;
+} GameState;
+
+EXTERN_PFX WINDOW* win; 			// the curses window
+EXTERN_PFX GameState state;			// the game state
+
+EXTERN_PFX pthread_mutex_t stateLock;
 EXTERN_PFX pthread_mutex_t screenLock;
+EXTERN_PFX pthread_mutex_t keyboardLock;
 
 EXTERN_PFX void drawChar(uint16_t y, uint16_t x, chtype c);
+EXTERN_PFX void getGameState(GameState* gs);
 
 #undef EXTERN_PFX
 #endif

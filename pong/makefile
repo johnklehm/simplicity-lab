@@ -12,7 +12,7 @@
 #
 EXENAME = pong
 # libraries
-LDFLAGS = -lpthread -lncurses
+LDFLAGS = -pthread -lncurses
 #max debug info (g3), max warning (Wall), c99+os calls (gnu99)
 CFLAGS = -g3 -Wall -std=gnu99 
 CC = gcc
