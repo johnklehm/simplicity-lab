@@ -10,7 +10,7 @@
  *
  * Copyright 2010 klehmc grewalk
  *
- * This file servers as the interface header definition for the ball controller logic of the 
+ * This file servers as the interface header definition for the collision logic of the 
  * pong game.
  */
 #ifndef COLLISION_H
