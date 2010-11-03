@@ -10,8 +10,8 @@
  *
  * Copyright 2010 klehmc grewalk 
  *
- * This file manages tthe motion of the ball.  This includes collisions, edge 
- * detections, paddle detection, etc.
+ * This file manages tthe motion of the ball.  This includes edge 
+ * detections and scoring.
  */
 #define BALLCTRL_C
 

@@ -12,6 +12,7 @@
 #
 EXENAME = pong
 # libraries
+# supposedly -pthread (no l) enables some extra defines you might need on some platforms
 LDFLAGS = -pthread -lncurses
 #max debug info (g3), max warning (Wall), c99+os calls (gnu99)
 CFLAGS = -g3 -Wall -std=gnu99 
@@ -28,6 +29,7 @@ $(EXENAME): $(OBJS)
 # pull in dependency info for *existing* .o files
 -include $(OBJS:.o=.d)
 
+#unholy magic
 %.o: %.c
 	$(CC) -c $(CFLAGS) $*.c -o $*.o
 	@$(CC) -MM $(CFLAGS) $*.c > $*.d
